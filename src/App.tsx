@@ -1,15 +1,13 @@
 import './App.scss';
-
+import { useState } from 'react';
+import { TodoList } from './components/TodoList';
+import { Todo } from './interfaces';
 import usersFromServer from './api/users';
 import todosFromServer from './api/todos';
 
-import { TodoList } from './components/TodoList';
-import { useState } from 'react';
-import { Todo } from './interfaces';
-
 const visibleTodos: Todo[] = todosFromServer.map(todo => ({
   ...todo,
-  user: usersFromServer.find(user => user.id === todo.userId),
+  user: usersFromServer.find(user => user.id === todo.userId) || undefined,
 }));
 
 export const App = () => {
@@ -41,7 +39,7 @@ export const App = () => {
       title,
       completed: false,
       userId: selectedUser,
-      user: usersFromServer.find(user => user.id === selectedUser),
+      user: usersFromServer.find(user => user.id === selectedUser) || undefined,
     };
 
     setTodos([...todos, newTodo]);
@@ -60,7 +58,7 @@ export const App = () => {
             placeholder="Enter a title"
             value={title}
             onChange={event => {
-              setTitle(event.target.value);
+              setTitle(event.target.value.replace(/[^a-zA-Zа-яА-Я0-9 ]/g, '')); // Filter title input
               setErrors(prev => ({ ...prev, title: false }));
             }}
           />
